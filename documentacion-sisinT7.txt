@@ -1,0 +1,36 @@
+Parte 1:
+vagrant init
+git init
+config.vm.box = "ubuntu/xenial64"
+config.vm.hostname = "daniel-suarez-moran"
+config.vm.network "private_network"/"public_network", ip: ""
+config.vm.synced_folder "." , "/ejemplo_sisin"
+Configuramos la box y un hostname
+  
+  config.vm.provision "shell", inline: <<-SHELL
+  apt update
+  sudo apt install -y nginx/apache2
+  sudo apt install -y php php-mysqli php-fpm
+  echo "-- Insertar datos de ejemplo en la tabla 'libros'" > /home/vagrant/datos_libros.sql
+  echo "INSERT INTO gestion_libreria.libros (titulo, autor, anio_publicacion, genero, precio) VALUES" >> /home/vagrant/datos_libros.sql
+  echo "('Cien Años de Soledad', 'Gabriel García Márquez', 1967, 'Novela', 15.99)," >> /home/vagrant/datos_libros.sql
+  echo "('Don Quijote de la Mancha', 'Miguel de Cervantes', 1605, 'Novela', 12.99)," >> /home/vagrant/datos_libros.sql
+  echo "('1984', 'George Orwell', 1949, 'Distopía', 13.99);" >> /home/vagrant/datos_libros.sql
+  sudo sed -i -e 's/\\/var\\/www\\/html/\\/ejemplo_sisin' /etc/nginx/sites-enabled/default
+  SHELL
+
+Configuramos la provision para generar el script
+hacemos vagrant up
+Parte 2:
+sudo su para acceder como superuser y cambiar privilegios(hacer capturas para examen)
+apt install mysql-server
+systemctl start mysql 
+systemctl status mysql para ver si tenemos mysql activo
+systemctl enabled mysql par permitir el uso del server
+mysql -u root -p
+CREATE DATABASE nombre;
+USE nombre;
+CREATE TABLE();
+SOURCE datos_libros.sql
+sudo systemctl stop mysql para parar la base
+ALTER DATABASE nombre CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
